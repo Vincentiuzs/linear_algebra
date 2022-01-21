@@ -248,3 +248,9 @@ def matrix(*elements, nrows, ncols):
 
     return Matrix(matrix)
 
+def vector(*elements, row=True):
+    
+    if row:
+        return matrix(*elements, nrows=1, ncols=len(elements))
+    return matrix(*elements, nrows=len(elements), ncols=10
+
