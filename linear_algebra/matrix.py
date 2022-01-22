@@ -1,42 +1,42 @@
 from collections import Counter
-from pandas import DataFrame
+
 
 class Matrix:
     """A (p \u00D7 q) matrix."""
-    
+
     def __init__(self, array):
-        
-        # Check if the array is a valid matrix and raise errors/exceptions if invalid
+
+        # Check if the array is a valid matrix and
+        # raise errors/exceptions if invalid
         self._isValid(array)
-        
+
         self.matrix = array
-        
+
         # size of the matrix: p x q
         self.p, self.q = self._size()
         self.size = self._size()
-        
-        
+
     def _isValid(self, array):
         """
 
         Args:
-          array: 
+          array:
 
         Returns:
 
-        
+
         """
         assert(len(array) > 0)
-        
+
         # check if array is of type list
         if isinstance(array, list):
-            
+
             # variable to check if array is 2d list
             array_is_2d = False
-            
+
             # check if elements of array are all lists
             if sum(list(map(lambda x: isinstance(x, list), array))) == len(array):
-                
+
                 # check if elements of array (lists) have same length
                 lengths = Counter(list(map(len, array)))
                 if lengths.most_common(1)[0][1] != len(array):
