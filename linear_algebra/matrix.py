@@ -98,13 +98,13 @@ class Matrix:
         rsv_spaces_cols = [max(i, j) for i, j in zip(rsv_spaces_cols1, rsv_spaces_cols2)]
         
         # row representing colnames
-        colname = lambda x: f'[,{x+1}]'
+        colname = lambda x: f'[,{x}]'
         mat_str_lst = [f"{' ':<{rsv_spaces_index}}"] + [f' {colname(j):>{rsv_spaces_cols[j]}}' for j in range(self.q)]
         mat_str = " ".join(mat_str_lst)
         
         # returns real part of number if imaginary part is 0
         for i in range(self.p):
-            index = f'[{i+1},]'
+            index = f'[{i},]'
             mat_str += " ".join([f'\n{index:>{rsv_spaces_index}}'] +[f' {self.matrix[i][j]:{rsv_spaces_cols[j]}}'\
                                                                      for j in range(self.q)])
 
@@ -149,7 +149,50 @@ class Matrix:
 
             if isinstance(rowkey, int) and isinstance(colkey, int):
                 # chooses a specific element
+                return self.getrows()[rowkey][colkey]            
+
+            elif isinstance(rowkey, int) and isinstance(colkey, slice):
+                # choose a row elemenets
+                return Matrix([self.getrows()[rowkey][colkey]])
+
+            elif isinstance(rowkey, slice) and isinstance(colkey, int):
+                # choose a  column elements
+                return Matrix([self.getcols()[colkey][rowkey]]).transpose()
+
+            elif isinstance(rowkey, slice) and isinstance(colkey, slice):
+                # choose a submatrix
+                submatrix = []
                 
+                def new_slice(aslice, isrowkey=True):
+                    start = aslice.start 
+                    stop = aslice.stop
+                    step = aslice.step
+
+                    if aslice.start is None:
+                        start = 0
+                    if aslice.stop is None:
+                        if isrowkey:
+                            stop = self.p
+                        else:
+                            stop = self.q
+                    if aslice.step is None:
+                        step = 1
+
+                    return slice(start, stop, step)
+
+                rowkey = new_slice(rowkey)
+                colkey = new_slice(colkey, isrowkey=False)
+
+                j = 0
+                for i in range(rowkey.start, rowkey.stop, rowkey.step):
+                    submatrix.append([])
+                    
+                    for k in range(colkey.start, colkey.stop, colkey.step):
+                        submatrix[j].append(self.matrix[i][k])
+
+                    j += 1
+
+                return Matrix(submatrix)
 
     def __setitem__(self, key, value):
         pass
@@ -277,3 +320,20 @@ def vector(*elements, row=True):
         return matrix(*elements, nrows=1, ncols=len(elements))
     return matrix(*elements, nrows=len(elements), ncols=1)
 
+
+A = matrix(1,2,3,4,5,6,7,8,9,10,11,12,nrows=3,ncols=4)
+print(A)
+
+
+print()
+print(A[1,1])
+
+print()
+print(A[1,1:])
+
+
+print()
+print(A[1:, 2])
+
+print()
+print(A[1:,:])
