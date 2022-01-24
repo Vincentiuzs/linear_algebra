@@ -141,6 +141,29 @@ class Matrix:
         '''Return self-other'''
         return self.sub(other)
     
+    def __getitem__(self, key):
+        
+        if isinstance(key, tuple):
+            rowkey = key[0]
+            colkey = key[1]
+
+            if isinstance(rowkey, int) and isinstance(colkey, int):
+                # chooses a specific element
+                
+
+    def __setitem__(self, key, value):
+        pass
+
+
+    def getrows(self):
+
+        return self.matrix
+
+    def getcols(self):
+
+        return self.transpose().matrix
+
+
     def add(self, other):
         """
 
