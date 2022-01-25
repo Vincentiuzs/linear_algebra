@@ -54,42 +54,41 @@ def order(A):
 def matrixToArray(A):
     if isinstance(A, Matrix):
         return A.matrix
-    if isinstance(B, ArgumentedMatrix):
+    if isinstance(A, ArgumentedMatrix):
         return A.left.matrix
 
 def all_pivots_to_right(A):
-    array = matrixToArray(A)
+    matrix_array = matrixToArray(A)
 
-    # copy contents to another variable: avoid passing by reference
-    temp = array.copy()
+    # using generators: avoiding Python's pass by reference
+    temp = ((row[i] for i in range(len(row))) for row in matrix_array)
     
     pivots = []
 
     for i in range(len(matrix_array)):
+        row = next(temp)
         for j in range(len(matrix_array[0])):
-            pivot = temp[i].pop(0)
+            pivot = next(row)
             if temp == [] or pivot != 0:
                 pivots.append(j)
                 break
-
+    
     for i in range(len(pivots)):
         if i == 0:
             pass
         else:
             if pivots[i] <= pivots[i-1]:
                 return False, i, pivots[i]
-            return True, None, None
+
+    return True, None, None
+
 
 def row_echelon(A):
     """Returns the row echolon form of a matrix."""
     A = order(A)
+    matrix_array = matrixToArray(A)
     
-    
-    find_matrix = lambda x: x.matrix if isinstance(x, Matrix) else x.left.matrix
-    matrix_array = find_matrix(A)
-    
-    true, row, col = are_pivots_to_right(A)
-    print(matrix_array)
+    true, row, col = all_pivots_to_right(A)
     while not true:
         # R1:  4 8 -8
         # R2: -3 2 0       quotient=-3/4 
@@ -100,7 +99,6 @@ def row_echelon(A):
         r1_pivot = matrix_array[row][col] 
         r2_pivot = matrix_array[row-1][col]
         
-        print(matrix_array)
         quotient = r1_pivot / r2_pivot
 
         if (r1_pivot > 0 and r2_pivot > 0) or (r1_pivot < 0 and r2_pivot < 0) or r2_pivot < 0:
@@ -110,18 +108,21 @@ def row_echelon(A):
 
         new_row = [r1_i + quotient * r2_i for r1_i, r2_i in zip(matrix_array[row], matrix_array[row-1])]
         matrix_array[row] = new_row
-
-        if isinstance(A, ArgumentedMatrix):
-            left = A.left.matrix
-            left[row] = [r1_i - quotient * r2_i for r1_i, r2_i in zip(left[row], left[row-1])]
-            A = order(ArgumentedMatrix(Matrix(matrix_array),Matrix(left)))
-        else:
+        
+        try:
+            right = A.right.matrix
+            right[row] = [r1_i - quotient * r2_i for r1_i, r2_i in zip(right[row], right[row-1])]
+            A = order(ArgumentedMatrix(Matrix(matrix_array),Matrix(right)))
+        
+        except:
             A = order(Matrix(matrix_array))
 
-        true, row, col = are_pivots_to_right(A)
-        matrix_array = find_matrix(A)
 
+        true, row, col = all_pivots_to_right(A)
+        matrix_array = matrixToArray(A)
+        
     return A
+
 def reduced_row_echelon(A):
     """Returns the reduced row echelon form of a matrix."""
 
