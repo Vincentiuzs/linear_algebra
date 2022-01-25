@@ -57,38 +57,34 @@ def matrixToArray(A):
     if isinstance(B, ArgumentedMatrix):
         return A.left.matrix
 
-def right_aligned_pivots(A):
+def all_pivots_to_right(A):
     array = matrixToArray(A)
 
-    pi
+    # copy contents to another variable: avoid passing by reference
+    temp = array.copy()
+    
+    pivots = []
+
+    for i in range(len(matrix_array)):
+        for j in range(len(matrix_array[0])):
+            pivot = temp[i].pop(0)
+            if temp == [] or pivot != 0:
+                pivots.append(j)
+                break
+
+    for i in range(len(pivots)):
+        if i == 0:
+            pass
+        else:
+            if pivots[i] <= pivots[i-1]:
+                return False, i, pivots[i]
+            return True, None, None
+
 def row_echelon(A):
     """Returns the row echolon form of a matrix."""
     A = order(A)
     
-    def are_pivots_to_right(B):
-        """Returns true if the privot of the row are to the right of the pivot
-        of the previous row
-        """
-        find_matrix = lambda x: x.matrix if isinstance(x, Matrix) else x.left.matrix
-        temp = find_matrix(B)
-
-        pivots = []
-
-        for i in range(len(matrix_array)):
-            for j in range(len(matrix_array[0])):
-                pivot = temp[i][j]
-                if temp == [] or pivot != 0
-                    pivots.append(j)
-                    break
-
-        for i in range(len(pivots)):
-            if i == 0:
-                pass
-            else:
-                if pivots[i] <= pivots[i-1]:
-                    return False, i, pivots[i]
-                return True, None, None
-
+    
     find_matrix = lambda x: x.matrix if isinstance(x, Matrix) else x.left.matrix
     matrix_array = find_matrix(A)
     
