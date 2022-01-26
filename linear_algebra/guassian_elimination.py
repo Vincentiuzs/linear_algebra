@@ -133,27 +133,53 @@ def get_pivots(A):
             if matrix_array[i][j] == 0:
                 pass
             else:
-                pivots.append(matrix[i][j])
+                pivots.append(matrix_array[i][j])
                 break
     return pivots
 
 def reduced_row_echelon(A):
     """Returns the reduced row echelon form of a matrix."""
-    A = row_echolon(A)
+    A = row_echelon(A)
     matrix_array = matrixToArray(A)
     pivots = get_pivots(A)
 
     for i in range(len(pivots) - 1, -1, -1):
         
-        if pivot[i] != 1:
-            new_row = [r1 / pivot[i] for r1 matrix_array[i]]
+        if pivots[i] != 1:
+            new_row = [r1 / pivots[i] for r1 in matrix_array[i]]
+            pivots[i] = 1
             matrix_array[i] = new_row
+
+            if not isinstance(A, Matrix):
+                right = A.right.matrix
+                right[i] = [right[i][0] / pivots[i]]
+                
+        elif pivots[i] == 0:
+            break
 
         if i == len(pivots) -  1:
             pass
         else:
-            pivot1 = None ###########################
+            # 2  7  4 
+            # 0 -2  3 
+            # 0  0 -2 
+            pivot = pivots[i]
+            pos   = matrix_array[i].index(pivot)
+            print(matrix_arra)
+            
+            for j in range(i, len(pivots)-1):
+                new_row = [r1 - r1*r2 for r1, r2 in zip(matrix_array[i], matrix_array[j+1])]
+                matrix_array[i] = new_row
 
+                pvts = get_pivots(Matrix(matrix_array))
+                print(pos)
+                if not isinstance(A, Matrix):
+                    right[i] = [right[i][0] - matrix_array[i][pos] * right[j+1][0]]
+                    B = order(ArgumentedMatrix(Matrix(matrix_array),Matrix(right)))
+                else:
+                    B = order(Matrix(matrix_array))
+
+    return B
 def main():
     A = Matrix([[1,3,1,3],[0,4,2,0],[1,0,2,3]])
     B = Matrix([[1],[-3],[0]])
@@ -167,7 +193,7 @@ def main():
 
     #print("",A,B,sep="\n\n",end="\n\n")
 
-    print(row_echelon(A))
+    print(reduced_row_echelon(C))
 
 if __name__ == "__main__":
     main()
