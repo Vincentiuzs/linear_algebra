@@ -1,14 +1,16 @@
-from matrix import Matrix, matrix
+from matrix import Matrix
 
 class ArgumentedMatrix:
 
     def __init__(self, matrix1, matrix2):
 
+        # check if both matrices are instances of Matrix
         if sum(list(map(lambda x: isinstance(x, Matrix), [matrix1, matrix2]))) == 2:
+            
+            # check if both matrices havce the same dimensions
             if matrix1.p == matrix2.p:
                 self.left  = matrix1
                 self.right = matrix2
-                self.merged = self.merge()
             else: 
                 raise Exception("both arguments of ArgumentedMatrix must have equal number of rows")
 
@@ -28,7 +30,6 @@ class ArgumentedMatrix:
         argmat_string = ""
 
         for i in range(self.left.p):     # or self.right.p
-                        
             for j in range(self.left.q + self.right.q):
                 if j < self.left.q - 1:
                     argmat_string += f'{self.left[i, j]:> {left_rsv_spaces[j] + 1}} '
@@ -36,7 +37,6 @@ class ArgumentedMatrix:
                     argmat_string += f'{self.left[i, j]:> {left_rsv_spaces[j] + 1}} |'
                 else:
                     argmat_string += f' {self.right[i, j - self.left.q]:> {right_rsv_spaces[j - self.left.q] + 1}}'
-
             argmat_string += "\n"
 
         return argmat_string.strip('\n')
@@ -44,14 +44,12 @@ class ArgumentedMatrix:
     def merge(self):
         """Returns a ArgumentedMatrix as a Matrix object"""
         rows = []
-
         for i in range(self.left.p):
             rows.append(self.left.matrix[i] + self.right.matrix[i])
-
         return Matrix(rows)
 
 def unmerge(A, left_ncols):
-
+    """Returns ArgumentedMatrix object"""
     if isinstance(A, Matrix):
         left = []
         right = []
@@ -59,15 +57,5 @@ def unmerge(A, left_ncols):
             left.append(A.matrix[i][:left_ncols])
             right.append(A.matrix[i][left_ncols:])
 
-        #print(left, right)
         return ArgumentedMatrix(Matrix(left),Matrix(right))
 
-def main():
-    A = matrix(1,0,0,0,0,1,0,1,0,ncols=3,nrows=3)
-    b = matrix(1,0,0,2,4,5,3,4,4,ncols=3,nrows=3)
-
-    arg = ArgumentedMatrix(A,b)
-    print(arg.merge())
-
-if __name__ == "__main__":
-    main()
