@@ -123,11 +123,36 @@ def row_echelon(A):
         
     return A
 
+def get_pivots(A):
+    matrix_array = matrixToArray(A)
+
+    pivots = []
+
+    for i in range(0, len(matrix_array)):
+        for j in range(0, len(matrix_array[0])):
+            if matrix_array[i][j] == 0:
+                pass
+            else:
+                pivots.append(matrix[i][j])
+                break
+    return pivots
+
 def reduced_row_echelon(A):
     """Returns the reduced row echelon form of a matrix."""
+    A = row_echolon(A)
+    matrix_array = matrixToArray(A)
+    pivots = get_pivots(A)
 
-    pass
+    for i in range(len(pivots) - 1, -1, -1):
+        
+        if pivot[i] != 1:
+            new_row = [r1 / pivot[i] for r1 matrix_array[i]]
+            matrix_array[i] = new_row
 
+        if i == len(pivots) -  1:
+            pass
+        else:
+            pivot1 = None ###########################
 
 def main():
     A = Matrix([[1,3,1,3],[0,4,2,0],[1,0,2,3]])
@@ -142,7 +167,7 @@ def main():
 
     #print("",A,B,sep="\n\n",end="\n\n")
 
-    print(row_echelon(C))
+    print(row_echelon(A))
 
 if __name__ == "__main__":
     main()
