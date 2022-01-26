@@ -82,7 +82,6 @@ class Matrix:
     
     def __repr__(self) -> 'str':
         '''Return string representation for a particular Matrix'''
-        
         # number of sapces to reserve for row name
         rsv_spaces_index = len(str(self.p)) + 3
         
@@ -321,19 +320,4 @@ def vector(*elements, row=True):
     return matrix(*elements, nrows=len(elements), ncols=1)
 
 
-A = matrix(1,2,3,4,5,6,7,8,9,10,11,12,nrows=3,ncols=4)
-print(A)
-
-
-print()
-print(A[1,1])
-
-print()
-print(A[1,1:])
-
-
-print()
-print(A[1:, 2])
-
-print()
-print(A[1:,:])
+#print(matrix(1,2,3,4,5,6,ncols=3,nrows=2))
