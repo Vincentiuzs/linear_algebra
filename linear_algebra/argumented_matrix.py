@@ -48,6 +48,10 @@ class ArgumentedMatrix:
             rows.append(self.left.matrix[i] + self.right.matrix[i])
         return Matrix(rows)
 
+def arg_matrix(A, b):
+    """Returns ArgumentedMatrix object"""
+    return ArgumentedMatrix(A,b)
+
 def unmerge(A, left_ncols):
     """Returns ArgumentedMatrix object"""
     if isinstance(A, Matrix):
