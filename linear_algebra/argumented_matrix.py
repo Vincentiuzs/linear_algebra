@@ -8,6 +8,7 @@ class ArgumentedMatrix:
             if matrix1.p == matrix2.p:
                 self.left  = matrix1
                 self.right = matrix2
+                self.merged = self.merge()
             else: 
                 raise Exception("both arguments of ArgumentedMatrix must have equal number of rows")
 
@@ -30,22 +31,43 @@ class ArgumentedMatrix:
                         
             for j in range(self.left.q + self.right.q):
                 if j < self.left.q - 1:
-                    argmat_string += f'{self.left[i, j]: {left_rsv_spaces[j]}} '
+                    argmat_string += f'{self.left[i, j]:> {left_rsv_spaces[j] + 1}} '
                 elif j == self.left.q - 1:
-                    argmat_string += f'{self.left[i, j]: {left_rsv_spaces[j]}} |'
+                    argmat_string += f'{self.left[i, j]:> {left_rsv_spaces[j] + 1}} |'
                 else:
-                    argmat_string += f' {self.right[i, j - self.left.q]: {right_rsv_spaces[j - self.left.q]}}'
+                    argmat_string += f' {self.right[i, j - self.left.q]:> {right_rsv_spaces[j - self.left.q] + 1}}'
 
             argmat_string += "\n"
 
         return argmat_string.strip('\n')
 
+    def merge(self):
+        """Returns a ArgumentedMatrix as a Matrix object"""
+        rows = []
 
-A = matrix(1,0,0,0,0,1,0,1,0,ncols=3,nrows=3)
-b = matrix(1,0,0,2,4,5,3,4,4,ncols=3,nrows=3)
+        for i in range(self.left.p):
+            rows.append(self.left.matrix[i] + self.right.matrix[i])
 
-arg = ArgumentedMatrix(A,b)
+        return Matrix(rows)
 
-print(arg)
+def unmerge(A, left_ncols):
 
+    if isinstance(A, Matrix):
+        left = []
+        right = []
+        for i in range(A.p):
+            left.append(A.matrix[i][:left_ncols])
+            right.append(A.matrix[i][left_ncols:])
 
+        #print(left, right)
+        return ArgumentedMatrix(Matrix(left),Matrix(right))
+
+def main():
+    A = matrix(1,0,0,0,0,1,0,1,0,ncols=3,nrows=3)
+    b = matrix(1,0,0,2,4,5,3,4,4,ncols=3,nrows=3)
+
+    arg = ArgumentedMatrix(A,b)
+    print(arg.merge())
+
+if __name__ == "__main__":
+    main()
