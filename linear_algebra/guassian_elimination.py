@@ -1,5 +1,5 @@
 from matrix import Matrix, matrix
-from argumented_matrix import ArgumentedMatrix
+from argumented_matrix import ArgumentedMatrix, unmerge
 from collections import Counter
 
 def order(A):
@@ -55,7 +55,7 @@ def matrixToArray(A):
     if isinstance(A, Matrix):
         return A.matrix
     if isinstance(A, ArgumentedMatrix):
-        return A.left.matrix
+        return A.merge().matrix
 
 def all_pivots_to_right(A):
     matrix_array = matrixToArray(A)
@@ -108,20 +108,14 @@ def row_echelon(A):
 
         new_row = [r1_i + quotient * r2_i for r1_i, r2_i in zip(matrix_array[row], matrix_array[row-1])]
         matrix_array[row] = new_row
+        B = order(Matrix(matrix_array))
+        true, row, col = all_pivots_to_right(B)
+        matrix_array = matrixToArray(B)
         
-        try:
-            right = A.right.matrix
-            right[row] = [r1_i - quotient * r2_i for r1_i, r2_i in zip(right[row], right[row-1])]
-            A = order(ArgumentedMatrix(Matrix(matrix_array),Matrix(right)))
-        
-        except:
-            A = order(Matrix(matrix_array))
-
-
-        true, row, col = all_pivots_to_right(A)
-        matrix_array = matrixToArray(A)
-        
-    return A
+    if isinstance(A, Matrix):
+        return B
+    if isinstance(A, ArgumentedMatrix):
+        return unmerge(B, A.left.q)
 
 def get_pivots(A):
     matrix_array = matrixToArray(A)
@@ -149,37 +143,29 @@ def reduced_row_echelon(A):
             new_row = [r1 / pivots[i] for r1 in matrix_array[i]]
             pivots[i] = 1
             matrix_array[i] = new_row
-
-            if not isinstance(A, Matrix):
-                right = A.right.matrix
-                right[i] = [right[i][0] / pivots[i]]
-                
+ 
         elif pivots[i] == 0:
             break
 
         if i == len(pivots) -  1:
             pass
         else:
-            # 2  7  4 
-            # 0 -2  3 
-            # 0  0 -2 
-            pivot = pivots[i]
-            pos   = matrix_array[i].index(pivot)
-            print(matrix_arra)
+            # 1  7  4 
+            # 0  1 3 
+            # 0  0 1 
+            
             
             for j in range(i, len(pivots)-1):
-                new_row = [r1 - r1*r2 for r1, r2 in zip(matrix_array[i], matrix_array[j+1])]
+                pos = matrix_array[j+1].index(pivots[j+1])
+                new_row = [r1 - matrix_array[i][pos] * r2 for r1, r2 in zip(matrix_array[i], matrix_array[j+1])]
                 matrix_array[i] = new_row
 
-                pvts = get_pivots(Matrix(matrix_array))
-                print(pos)
-                if not isinstance(A, Matrix):
-                    right[i] = [right[i][0] - matrix_array[i][pos] * right[j+1][0]]
-                    B = order(ArgumentedMatrix(Matrix(matrix_array),Matrix(right)))
-                else:
-                    B = order(Matrix(matrix_array))
+            B = order(Matrix(matrix_array))
+    if isinstance(A, Matrix):
+        return B
+    if isinstance(A, ArgumentedMatrix):
+        return unmerge(B, A.left.q)
 
-    return B
 def main():
     A = Matrix([[1,3,1,3],[0,4,2,0],[1,0,2,3]])
     B = Matrix([[1],[-3],[0]])
