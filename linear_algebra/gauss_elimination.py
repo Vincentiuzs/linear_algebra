@@ -113,5 +113,60 @@ def determinant(A):
         detB = det * reduce(mul, [B[i,i] for i in range(B.p)])
         return detB
 
+def find_pivots(A):
+    array = A.matrix
+
+    pivots = []
+    for i in range(A.p):
+        for j in range(A.q):
+            if array[i][j] == 0 and j != A.q - 1:
+                pass
+            else:
+                pivots.append(array[i][j])
+                break
+
+    return pivots
+
+def reduced_row_echelon_with_det(A):
+    B, det = row_echelon_with_det(A)
+    B_is_aug = False
+    left_ncols = None
+
+    if isinstance(B, ArgumentedMatrix):
+        B_is_aug = True
+        left_ncols = B.left.q
+        B = B.merge()
+
+    pivots = find_pivots(B)
+    
+    for i in range(len(pivots) - 1, -1, -1):
+        if pivots[i] == 0 or pivots[i] == 1:
+            pass
+        else:
+            B = scalar_mul(i, 1/pivots[i], B.p) * B
+            det *= 1/pivots[i]
+            pivots = find_pivots(B)
+        if i == len(pivots) - 1:
+            pass
+        else:
+            for j in range(i, len(pivots) - 1):
+                pos = B.matrix[j+1].index(pivots[j+1])
+                B = row_sum(i, j+1, -1 * B.matrix[i][pos], B.p) * B
+                pivots = find_pivots(B)
+    
+    if B_is_aug:
+        return unmerge(B, left_ncols), det
+    return B, det
+
+def reduced_row_echelon(A):
+    return reduced_row_echelon_with_det(A)[0]
 
 
+
+
+A = Matrix([[1,-7,3],[4,-5,0],[7,8,-9]])
+b = Matrix([[1],[3],[4]])
+C = ArgumentedMatrix(A,b)
+
+print(reduced_row_echelon(A))
+print(reduced_row_echelon(C))
