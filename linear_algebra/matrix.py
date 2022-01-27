@@ -274,9 +274,15 @@ class Matrix:
             # check if number of column of this matrix equals number of rows in other matrix
             if self.q == other.p:
                 a = self.matrix; b = other.matrix
-                # c[i][j] = a[i][0]*b[1][0] + ... + a[i][self.p-1]*b[self.p-1][j]
-                c = [[sum([a[i][k]* b[k][j] for k in range(self.q)]) \
-                      for i in range(self.p)] for j in range(other.q)]
+                c = []
+
+                for i in range(self.p):
+                    c.append([])
+                    for j in range(other.q):
+                        c[i].append(0)
+                        for k in range(self.q):
+                            c[i][j] += a[i][k] * b[k][j]
+
                 return Matrix(c)
             else:
                 raise Exception('matrices are non-comformable')
@@ -319,5 +325,3 @@ def vector(*elements, row=True):
         return matrix(*elements, nrows=1, ncols=len(elements))
     return matrix(*elements, nrows=len(elements), ncols=1)
 
-
-#print(matrix(1,2,3,4,5,6,ncols=3,nrows=2))
